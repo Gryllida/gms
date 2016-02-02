@@ -15,7 +15,13 @@ schema_from_schema_loader({ naming => 'v4' }, sub {
 
   foreach my $cloak (@cloaks) {
       if (!$cloak->requestor) {
-          $cloak->requestor($cloak->active_change->changed_by);
+          my $offer = $cloak->cloak_change_changes->find({
+                  status => 'offered',
+              });
+
+          next unless $offer;
+
+          $cloak->requestor($offer->changed_by);
           $cloak->update;
       }
   }
